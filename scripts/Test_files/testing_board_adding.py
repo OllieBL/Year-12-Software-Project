@@ -1,11 +1,11 @@
 import numpy as np
-from game import board
+from scripts.system.game import board
 
-tile1 = board.Tile()
-tile2 = board.Tile()
-tile3 = board.Tile()
+tile1 = board.Tile((2,21), start_tile=True)
+tile2 = board.Tile((1,0), tile1)
+tile3 = board.Tile((0,1), tile2)
 
-board0 = board.Board({(0,0):tile1})
+board0 = board.Board({tile1._pos:tile1})
 
 board0.add_tile(tile2)
 board0.print_tiles()
