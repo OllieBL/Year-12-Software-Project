@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 import json
+import random
 
 class Board: 
     def __init__(self, tiles):
@@ -12,7 +13,38 @@ class Board:
     def print_tiles(self):
         print(self._tiles)
 
-    
+
+    # Scores all of the tile adjacencies and outputs a score 
+    def score_board(self):
+
+        # allows me to loop over a set of coordinates that are adjacent
+        adjacency_looper = [
+            (-1,-1),
+            (0,-1),
+            (1,-1),
+            (-1,0),
+            (1,0),
+            (-1,1),
+            (0,1),
+            (1,1)
+        ]
+
+        for testing_tile in self._tiles:
+            tile_pos = testing_tile.get_position()
+            tile_adjacencies = testing_tile.get_adjacencies()
+            tile_score = 0
+            new_score = tile_score
+            for looped_pos in adjacency_looper:
+                # This is in a try so I can avoid searching the list before hand for improved performance
+                try:
+                    adjacent_tile = self._tiles[tuple(np.add(np.array(tile_pos), np.array(looped_pos)).tolist())]    # finds new tile that is adjacent
+                    new_score += tile_adjacencies[adjacent_tile.get_type()]                                          # updates tile score with adjacency
+                except:
+                    continue
+
+
+
+                
     def generate_board_display(self, screen):
         tiles = self._tiles
         tiles = tiles.keys()
@@ -49,18 +81,14 @@ class Board:
 
 
 class Tile:
-    def __init__(self, relative_pos, tile_type, neighbour_tile=False, start_tile=False):
-        if start_tile == False:
-            self._pos = tuple(np.add(np.array(relative_pos), np.array(neighbour_tile._pos)).tolist())
-        elif start_tile == True:
-            self._pos = relative_pos
-        else:
-            raise Exception("start_tile must be a bool")
+    def __init__(self, pos, tile_type):
+        self._pos = pos
         self._type = tile_type
 
         with open('scripts/system/game/tile_types.json') as f:
             type_features = json.load(f)
         self._image = type_features[self._type]["image"]
+        self._adjacencies = type_features[self._type]["adjacencies"]
 
 
     def get_position(self):
@@ -69,15 +97,41 @@ class Tile:
     def get_image(self):
         return self._image
     
+    def get_type(self):
+        return self._type
+    
 
 
+
+
+
+
+class Hand:
+    def __init__(self):
+        self._tiles = []
+        self._loop_range = 
+
+
+    def create_hand(self):
+        with open('scripts/system/game/tile_types.json') as f:
+            type_features = json.load(f)
+
+        for tiletype in type_features:
+            n = 0
+            while n < 4:
+                self._tiles.append(tiletype)
+        
+        random.shuffle(self._tiles)
+    
+
+'''
 pygame.init()
 
 screen = pygame.display.set_mode((1920, 1080))
 
-tile1 = Tile((0,0), tile_type="forest", start_tile=True)
-tile2 = Tile((1,0), neighbour_tile=tile1, tile_type="forest")
-tile3 = Tile((0,1), neighbour_tile=tile2, tile_type="forest")
+tile1 = Tile((0,0), tile_type="forest")
+tile2 = Tile((1,0), tile_type="forest")
+tile3 = Tile((0,1), tile_type="forest")
 tile4 = Tile((-1,1), neighbour_tile=tile1, tile_type="forest")
 tile5 = Tile((1,1), neighbour_tile=tile2, tile_type="forest")
 tile6 = Tile((0,1), neighbour_tile=tile3, tile_type="forest")
@@ -95,3 +149,4 @@ while True:
                     exit()
     board0.generate_board_display(screen)
     pygame.display.flip()
+'''
