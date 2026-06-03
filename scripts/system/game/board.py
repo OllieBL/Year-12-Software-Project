@@ -6,9 +6,11 @@ import random
 class Board: 
     def __init__(self, tiles):
         self._tiles = tiles
+        self._adjacent_non_tiles = []
 
     def add_tile(self, added_tile):
         self._tiles.update({added_tile._pos : added_tile})
+        self.score_board()
 
     def print_tiles(self):
         print(self._tiles)
@@ -16,6 +18,7 @@ class Board:
 
     # Scores all of the tile adjacencies and outputs a score 
     def score_board(self):
+        tiles = self._tiles
 
         # allows me to loop over a set of coordinates that are adjacent
         adjacency_looper = [
@@ -29,18 +32,24 @@ class Board:
             (1,1)
         ]
 
-        for testing_tile in self._tiles:
-            tile_pos = testing_tile.get_position()
-            tile_adjacencies = testing_tile.get_adjacencies()
+        for testing_tile in tiles:
+            tile_pos = testing_tile
+            tile_adjacencies = tiles[testing_tile].get_adjacencies()
             tile_score = 0
             new_score = tile_score
+            old_score = tile_score
             for looped_pos in adjacency_looper:
                 # This is in a try so I can avoid searching the list before hand for improved performance
                 try:
-                    adjacent_tile = self._tiles[tuple(np.add(np.array(tile_pos), np.array(looped_pos)).tolist())]    # finds new tile that is adjacent
+                    adj_tile_coord = tuple(np.add(np.array(tile_pos), np.array(looped_pos)).tolist())
+                    adjacent_tile = self._tiles[adj_tile_coord]    # finds new tile that is adjacent
                     new_score += tile_adjacencies[adjacent_tile.get_type()]                                          # updates tile score with adjacency
+                    old_score = new_score                                                                            # old score stops new score from becoming non-int
+                except KeyError:
+                    if adj_tile_coord not in self._adjacent_non_tiles:
+                        self._adjacent_non_tiles.append(adj_tile_coord)
                 except:
-                    continue
+                    new_score = old_score
 
 
 
@@ -48,6 +57,9 @@ class Board:
     def generate_board_display(self, screen):
         tiles = self._tiles
         tiles = tiles.keys()
+        non_tiles = self._adjacent_non_tiles
+        display_tiles = []
+
         low_tile = [(0,0),(0,0)]
         high_tile = [(0,0),(0,0)]
 
@@ -74,10 +86,28 @@ class Board:
             tile_screen_pos[i] = screen_pos
 
         for i in tile_screen_pos:
-            pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(tile_screen_pos[i][0], tile_screen_pos[i][1], tile_size, tile_size))
+            display_tile = pygame.Rect(tile_screen_pos[i][0], tile_screen_pos[i][1], tile_size, tile_size)
+            pygame.draw.rect(screen, (255, 255, 255), display_tile)
+            display_tiles.append(display_tile)
             tile_image = pygame.image.load(self._tiles[i].get_image()).convert_alpha()
             tile_image = pygame.transform.scale(tile_image, (tile_size, tile_size))
             screen.blit(tile_image, (i[0], i[1]))
+
+
+        non_tile_screen_pos = {}
+        for i in non_tiles:
+            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (i[1]-centre_tile[1])*tile_size+screen.get_height()/2)
+            non_tile_screen_pos[i] = screen_pos
+
+        for i in tile_screen_pos:
+            display_tile = pygame.Rect(tile_screen_pos[i][0], tile_screen_pos[i][1], tile_size, tile_size)
+            if display_tile.collidepoint(pygame.mouse.get_pos()):
+                pygame.draw.rect(screen, (100, 100, 100), display_tile)
+            else:
+                pygame.draw.rect(screen, (0, 0, 0), display_tile)
+
+
+
 
 
 class Tile:
@@ -85,6 +115,7 @@ class Tile:
         self._pos = pos
         self._type = tile_type
 
+        # loads up the json file for tile features
         with open('scripts/system/game/tile_types.json') as f:
             type_features = json.load(f)
         self._image = type_features[self._type]["image"]
@@ -100,6 +131,9 @@ class Tile:
     def get_type(self):
         return self._type
     
+    def get_adjacencies(self):
+        return self._adjacencies
+    
 
 
 
@@ -109,7 +143,7 @@ class Tile:
 class Hand:
     def __init__(self):
         self._tiles = []
-        self._loop_range = 
+        self._loop_range = (1,6) # How many of each kind of tile there are
 
 
     def create_hand(self):
@@ -118,13 +152,14 @@ class Hand:
 
         for tiletype in type_features:
             n = 0
-            while n < 4:
+            loop_amount = random.randrange(self._loop_range[0], self._loop_range[1]) # so a random amount of tiles are produced within the range
+            while n <= loop_amount:
                 self._tiles.append(tiletype)
         
         random.shuffle(self._tiles)
     
 
-'''
+
 pygame.init()
 
 screen = pygame.display.set_mode((1920, 1080))
@@ -132,9 +167,9 @@ screen = pygame.display.set_mode((1920, 1080))
 tile1 = Tile((0,0), tile_type="forest")
 tile2 = Tile((1,0), tile_type="forest")
 tile3 = Tile((0,1), tile_type="forest")
-tile4 = Tile((-1,1), neighbour_tile=tile1, tile_type="forest")
-tile5 = Tile((1,1), neighbour_tile=tile2, tile_type="forest")
-tile6 = Tile((0,1), neighbour_tile=tile3, tile_type="forest")
+tile4 = Tile((-1,1), tile_type="forest")
+tile5 = Tile((1,1), tile_type="forest")
+tile6 = Tile((-1,-1), tile_type="forest")
 
 board0 = Board({tile1._pos:tile1})
 
@@ -149,4 +184,3 @@ while True:
                     exit()
     board0.generate_board_display(screen)
     pygame.display.flip()
-'''

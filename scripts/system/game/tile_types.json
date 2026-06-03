@@ -1,3 +1,3 @@
 {
-    "forest" : {"image" : "Art/tile_images/forest.jpg"}
+    "forest" : {"image" : "Art/tile_images/forest.jpg", "adjacencies" : {"forest" : 2}}
 }
