@@ -19,6 +19,7 @@ class Board:
     # Scores all of the tile adjacencies and outputs a score 
     def score_board(self):
         tiles = self._tiles
+        self._adjacent_non_tiles = []
 
         # allows me to loop over a set of coordinates that are adjacent
         adjacency_looper = [
@@ -74,15 +75,15 @@ class Board:
             if high_tile[1][1] < i[1]:
                 high_tile[1] = i
         
-        total_range = (high_tile[0][0]-low_tile[0][0]+1, high_tile[1][1]-low_tile[1][1]+1)
+        total_range = (high_tile[0][0]-low_tile[0][0]+3, high_tile[1][1]-low_tile[1][1]+3)
 
-        centre_tile = (round(total_range[0]/2), round(total_range[1]/2))
+        centre_tile = (round((high_tile[0][0]+low_tile[0][0])/2), round((high_tile[1][1]+low_tile[1][1])/2))
 
         tile_size = min(round((3/4*screen.get_width())/total_range[0]), round((3/4*screen.get_height())/total_range[1]))
 
         tile_screen_pos = {}
         for i in tiles:
-            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (i[1]-centre_tile[1])*tile_size+screen.get_height()/2)
+            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (-i[1]+centre_tile[1])*tile_size+screen.get_height()/2)
             tile_screen_pos[i] = screen_pos
 
         for i in tile_screen_pos:
@@ -91,20 +92,20 @@ class Board:
             display_tiles.append(display_tile)
             tile_image = pygame.image.load(self._tiles[i].get_image()).convert_alpha()
             tile_image = pygame.transform.scale(tile_image, (tile_size, tile_size))
-            screen.blit(tile_image, (i[0], i[1]))
+            screen.blit(tile_image, (tile_screen_pos[i][0], tile_screen_pos[i][1]))
 
 
         non_tile_screen_pos = {}
         for i in non_tiles:
-            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (i[1]-centre_tile[1])*tile_size+screen.get_height()/2)
+            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (-i[1]+centre_tile[1])*tile_size+screen.get_height()/2)
             non_tile_screen_pos[i] = screen_pos
 
-        for i in tile_screen_pos:
-            display_tile = pygame.Rect(tile_screen_pos[i][0], tile_screen_pos[i][1], tile_size, tile_size)
+        for i in non_tile_screen_pos:
+            display_tile = pygame.Rect(non_tile_screen_pos[i][0], non_tile_screen_pos[i][1], tile_size, tile_size)
             if display_tile.collidepoint(pygame.mouse.get_pos()):
                 pygame.draw.rect(screen, (100, 100, 100), display_tile)
             else:
-                pygame.draw.rect(screen, (0, 0, 0), display_tile)
+                pygame.draw.rect(screen, (10, 10, 10), display_tile)
 
 
 
@@ -169,7 +170,7 @@ tile2 = Tile((1,0), tile_type="forest")
 tile3 = Tile((0,1), tile_type="forest")
 tile4 = Tile((-1,1), tile_type="forest")
 tile5 = Tile((1,1), tile_type="forest")
-tile6 = Tile((-1,-1), tile_type="forest")
+tile6 = Tile((-1,0), tile_type="forest")
 
 board0 = Board({tile1._pos:tile1})
 
