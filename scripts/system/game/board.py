@@ -60,6 +60,8 @@ class Board:
         tiles = tiles.keys()
         non_tiles = self._adjacent_non_tiles
         display_tiles = []
+        screen_height = screen.get_height()
+        screen_width = screen.get_width()
 
         low_tile = [(0,0),(0,0)]
         high_tile = [(0,0),(0,0)]
@@ -77,13 +79,13 @@ class Board:
         
         total_range = (high_tile[0][0]-low_tile[0][0]+3, high_tile[1][1]-low_tile[1][1]+3)
 
-        centre_tile = (round((high_tile[0][0]+low_tile[0][0])/2), round((high_tile[1][1]+low_tile[1][1])/2))
+        centre_tile = (round((high_tile[0][0]+low_tile[0][0])*0.5), round((high_tile[1][1]+low_tile[1][1])*0.5))
 
-        tile_size = min(round((3/4*screen.get_width())/total_range[0]), round((3/4*screen.get_height())/total_range[1]))
+        tile_size = min(round((0.75*screen_width)/total_range[0]), round((0.625*screen_height)/total_range[1]))
 
         tile_screen_pos = {}
         for i in tiles:
-            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (-i[1]+centre_tile[1])*tile_size+screen.get_height()/2)
+            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen_width*0.5, (-i[1]+centre_tile[1])*tile_size+(screen_height*0.625)*0.5)
             tile_screen_pos[i] = screen_pos
 
         for i in tile_screen_pos:
@@ -97,7 +99,7 @@ class Board:
 
         non_tile_screen_pos = {}
         for i in non_tiles:
-            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen.get_width()/2, (-i[1]+centre_tile[1])*tile_size+screen.get_height()/2)
+            screen_pos = ((i[0]-centre_tile[0])*tile_size+screen_width*0.5, (-i[1]+centre_tile[1])*tile_size+(screen_height*0.625)*0.5)
             non_tile_screen_pos[i] = screen_pos
 
         for i in non_tile_screen_pos:
@@ -144,10 +146,12 @@ class Tile:
 class Hand:
     def __init__(self):
         self._tiles = []
-        self._loop_range = (1,6) # How many of each kind of tile there are
+        self._loop_range = (5,10) # How many of each kind of tile there are
+        self.selected_tile = ''
+        self._hand = []
 
 
-    def create_hand(self):
+    def create_deck(self):
         with open('scripts/system/game/tile_types.json') as f:
             type_features = json.load(f)
 
@@ -156,8 +160,45 @@ class Hand:
             loop_amount = random.randrange(self._loop_range[0], self._loop_range[1]) # so a random amount of tiles are produced within the range
             while n <= loop_amount:
                 self._tiles.append(tiletype)
+                n += 1
         
         random.shuffle(self._tiles)
+
+    def create_hand(self):
+        x = 5
+        while x > 0:
+            self._hand.append(self._tiles[0])
+            self._tiles.pop(0)
+            x-=1
+
+    
+    def display_hand(self, screen):
+        hand = self._hand
+        screen_height = screen.get_height()
+        screen_width = screen.get_width()
+        with open('scripts/system/game/tile_types.json') as f:
+            type_features = json.load(f)
+
+        handlen = len(hand)
+        handlenrecip = 1/handlen
+
+        centre_point = 0.5*handlen
+
+        tile_size = min(0.75*screen_width*handlenrecip, 0.375*screen_height) 
+        
+        hand_tile_pos = []
+        for i in range(len(hand)):
+            screen_pos = ((i - centre_point)*tile_size + screen_width*0.5, screen_height - tile_size)
+            hand_tile_pos.append(screen_pos)
+
+        for i in range(len(hand_tile_pos)):
+            display_tile = pygame.Rect(hand_tile_pos[i][0], hand_tile_pos[i][1], tile_size, tile_size)
+            pygame.draw.rect(screen, (255, 255, 255), display_tile)
+            #display_tiles.append(display_tile)                         # I'm just as confused what this was for as you are
+            tile_image = pygame.image.load(type_features[hand[i]]["image"]).convert_alpha()
+            tile_image = pygame.transform.scale(tile_image, (tile_size, tile_size))
+            screen.blit(tile_image, (hand_tile_pos[i][0], hand_tile_pos[i][1]))
+
     
 
 
@@ -179,9 +220,16 @@ board0.add_tile(tile3)
 board0.add_tile(tile4)
 board0.add_tile(tile5)
 board0.add_tile(tile6)
+
+hand0 = Hand()
+hand0.create_deck()
+hand0.create_hand()
+
 while True:
     for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
     board0.generate_board_display(screen)
+    hand0.display_hand(screen)
+    
     pygame.display.flip()
