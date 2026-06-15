@@ -55,7 +55,7 @@ class Board:
 
 
                 
-    def generate_board_display(self, screen):
+    def generate_board_display(self, screen, hand):
         tiles = self._tiles
         tiles = tiles.keys()
         non_tiles = self._adjacent_non_tiles
@@ -106,6 +106,11 @@ class Board:
             display_tile = pygame.Rect(non_tile_screen_pos[i][0], non_tile_screen_pos[i][1], tile_size, tile_size)
             if display_tile.collidepoint(pygame.mouse.get_pos()):
                 pygame.draw.rect(screen, (100, 100, 100), display_tile)
+                if pygame.mouse.get_pressed()[0] and hand.get_click_state():
+                    tile = Tile(i, hand.get_clicked_tile())
+                    self.add_tile(tile)
+                    hand.unclick()
+                    hand.create_hand()
             else:
                 pygame.draw.rect(screen, (10, 10, 10), display_tile)
 
@@ -114,6 +119,7 @@ class Board:
 
 
 class Tile:
+
     def __init__(self, pos, tile_type):
         self._pos = pos
         self._type = tile_type
@@ -149,6 +155,7 @@ class Hand:
         self._loop_range = (5,10) # How many of each kind of tile there are
         self.selected_tile = ''
         self._hand = []
+        self._isclicking = False
 
 
     def create_deck(self):
@@ -166,10 +173,9 @@ class Hand:
 
     def create_hand(self):
         x = 5
-        while x > 0:
+        while x != len(self._hand) and len(self._tiles) != 0:
             self._hand.append(self._tiles[0])
             self._tiles.pop(0)
-            x-=1
 
     
     def display_hand(self, screen):
@@ -180,6 +186,8 @@ class Hand:
             type_features = json.load(f)
 
         handlen = len(hand)
+        if handlen == 0:
+            return
         handlenrecip = 1/handlen
 
         centre_point = 0.5*handlen
@@ -191,6 +199,8 @@ class Hand:
             screen_pos = ((i - centre_point)*tile_size + screen_width*0.5, screen_height - tile_size)
             hand_tile_pos.append(screen_pos)
 
+        display_tiles = []
+        removed_tile = ''
         for i in range(len(hand_tile_pos)):
             display_tile = pygame.Rect(hand_tile_pos[i][0], hand_tile_pos[i][1], tile_size, tile_size)
             pygame.draw.rect(screen, (255, 255, 255), display_tile)
@@ -198,6 +208,21 @@ class Hand:
             tile_image = pygame.image.load(type_features[hand[i]]["image"]).convert_alpha()
             tile_image = pygame.transform.scale(tile_image, (tile_size, tile_size))
             screen.blit(tile_image, (hand_tile_pos[i][0], hand_tile_pos[i][1]))
+            if display_tile.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not self._isclicking:
+                removed_tile = i
+        if removed_tile != '':
+            self._clicked_tile = self._hand[removed_tile]
+            self._hand.pop(removed_tile)
+            self._isclicking = True
+
+    def get_click_state(self):
+        return self._isclicking
+    
+    def get_clicked_tile(self):
+        return self._clicked_tile
+
+    def unclick(self):
+        self._isclicking = False
 
     
 
@@ -226,10 +251,12 @@ hand0.create_deck()
 hand0.create_hand()
 
 while True:
+    screen.fill((0,0,0))
+
     for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
-    board0.generate_board_display(screen)
+    board0.generate_board_display(screen, hand0)
     hand0.display_hand(screen)
     
     pygame.display.flip()

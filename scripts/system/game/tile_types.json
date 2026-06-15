@@ -1,3 +1,4 @@
 {
-    "forest" : {"image" : "Art/tile_images/forest.jpg", "adjacencies" : {"forest" : 2}}
+    "forest" : {"image" : "Art/tile_images/forest.jpg", "adjacencies" : {"forest" : 2, "city" : 0}},
+    "city" : {"image" : "Art/tile_images/city.jpg", "adjacencies": {"city" : 2, "forest" : 0}}
 }
