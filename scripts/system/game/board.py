@@ -7,6 +7,7 @@ class Board:
     def __init__(self, tiles):
         self._tiles = tiles
         self._adjacent_non_tiles = []
+        self._score = 0
 
     def add_tile(self, added_tile):
         self._tiles.update({added_tile._pos : added_tile})
@@ -36,21 +37,22 @@ class Board:
         for testing_tile in tiles:
             tile_pos = testing_tile
             tile_adjacencies = tiles[testing_tile].get_adjacencies()
-            tile_score = 0
-            new_score = tile_score
-            old_score = tile_score
+            old_score = self._score
+            new_score = old_score
             for looped_pos in adjacency_looper:
                 # This is in a try so I can avoid searching the list before hand for improved performance
                 try:
                     adj_tile_coord = tuple(np.add(np.array(tile_pos), np.array(looped_pos)).tolist())
-                    adjacent_tile = self._tiles[adj_tile_coord]    # finds new tile that is adjacent
+                    adjacent_tile = self._tiles[adj_tile_coord]                                                      # finds new tile that is adjacent
                     new_score += tile_adjacencies[adjacent_tile.get_type()]                                          # updates tile score with adjacency
                     old_score = new_score                                                                            # old score stops new score from becoming non-int
                 except KeyError:
-                    if adj_tile_coord not in self._adjacent_non_tiles:
+                    if adj_tile_coord not in self._adjacent_non_tiles and adj_tile_coord not in tiles:               # makes sure the tile isn't in tiles or nontiles before adding it
                         self._adjacent_non_tiles.append(adj_tile_coord)
                 except:
-                    new_score = old_score
+                    new_score = old_score                                                                            # stops horrific errors where I get stuff going through the filter and getting nonint answers
+            
+        self._score = new_score
 
 
 
@@ -81,7 +83,7 @@ class Board:
 
         centre_tile = (round((high_tile[0][0]+low_tile[0][0])*0.5), round((high_tile[1][1]+low_tile[1][1])*0.5))
 
-        tile_size = min(round((0.75*screen_width)/total_range[0]), round((0.625*screen_height)/total_range[1]))
+        tile_size = min(round((0.75*screen_width)/total_range[0]), round((0.5*screen_height)/total_range[1]))
 
         tile_screen_pos = {}
         for i in tiles:
@@ -113,6 +115,16 @@ class Board:
                     hand.create_hand()
             else:
                 pygame.draw.rect(screen, (10, 10, 10), display_tile)
+            
+        font = pygame.font.Font('freesansbold.ttf', 32)
+
+        text = font.render('score: ' + str(self._score), True, (255,255,255))
+
+        textRect = text.get_rect()
+        
+        textRect.center = (screen_width/2, screen_height*0.1)
+
+        screen.blit(text, textRect)
 
 
 
@@ -164,7 +176,7 @@ class Hand:
 
         for tiletype in type_features:
             n = 0
-            loop_amount = random.randrange(self._loop_range[0], self._loop_range[1]) # so a random amount of tiles are produced within the range
+            loop_amount = 10 #random.randrange(self._loop_range[0], self._loop_range[1]) # so a random amount of tiles are produced within the range
             while n <= loop_amount:
                 self._tiles.append(tiletype)
                 n += 1
@@ -198,7 +210,7 @@ class Hand:
         for i in range(len(hand)):
             screen_pos = ((i - centre_point)*tile_size + screen_width*0.5, screen_height - tile_size)
             hand_tile_pos.append(screen_pos)
-
+        
         display_tiles = []
         removed_tile = ''
         for i in range(len(hand_tile_pos)):
@@ -214,6 +226,16 @@ class Hand:
             self._clicked_tile = self._hand[removed_tile]
             self._hand.pop(removed_tile)
             self._isclicking = True
+        
+        font = pygame.font.Font('freesansbold.ttf', 32)
+
+        text = font.render('Tiles Left: ' + str(len(self._tiles)), True, (255,255,255))
+
+        textRect = text.get_rect()
+        
+        textRect.center = (100, screen_height - 100)
+
+        screen.blit(text, textRect)
 
     def get_click_state(self):
         return self._isclicking
@@ -232,19 +254,10 @@ pygame.init()
 screen = pygame.display.set_mode((1920, 1080))
 
 tile1 = Tile((0,0), tile_type="forest")
-tile2 = Tile((1,0), tile_type="forest")
-tile3 = Tile((0,1), tile_type="forest")
-tile4 = Tile((-1,1), tile_type="forest")
-tile5 = Tile((1,1), tile_type="forest")
-tile6 = Tile((-1,0), tile_type="forest")
 
-board0 = Board({tile1._pos:tile1})
+board0 = Board({})
 
-board0.add_tile(tile2)
-board0.add_tile(tile3)
-board0.add_tile(tile4)
-board0.add_tile(tile5)
-board0.add_tile(tile6)
+board0.add_tile(tile1)
 
 hand0 = Hand()
 hand0.create_deck()
