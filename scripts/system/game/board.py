@@ -211,7 +211,6 @@ class Hand:
             screen_pos = ((i - centre_point)*tile_size + screen_width*0.5, screen_height - tile_size)
             hand_tile_pos.append(screen_pos)
         
-        display_tiles = []
         removed_tile = ''
         for i in range(len(hand_tile_pos)):
             display_tile = pygame.Rect(hand_tile_pos[i][0], hand_tile_pos[i][1], tile_size, tile_size)
@@ -248,28 +247,14 @@ class Hand:
 
     
 
+def loop_function(screen, board, hand):
+    while True:
+        screen.fill((0,0,0))
 
-pygame.init()
-
-screen = pygame.display.set_mode((1920, 1080))
-
-tile1 = Tile((0,0), tile_type="forest")
-
-board0 = Board({})
-
-board0.add_tile(tile1)
-
-hand0 = Hand()
-hand0.create_deck()
-hand0.create_hand()
-
-while True:
-    screen.fill((0,0,0))
-
-    for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
-    board0.generate_board_display(screen, hand0)
-    hand0.display_hand(screen)
-    
-    pygame.display.flip()
+        for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        exit()
+        board.generate_board_display(screen, hand)
+        hand.display_hand(screen)
+        
+        pygame.display.flip()

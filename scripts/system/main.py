@@ -1,7 +1,12 @@
 import pygame
-import screen
+import menu
 
 
 pygame.init()
 
-screen = pygame.display.set_mode((1920, 1080))
+size = pygame.display.get_desktop_sizes()
+screen = pygame.display.set_mode(size[0])
+
+menu1 = menu.Menu(screen)
+
+menu1.display_menu()
