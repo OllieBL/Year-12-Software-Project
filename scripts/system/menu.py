@@ -14,13 +14,13 @@ class Menu:
         font = pygame.font.Font('freesansbold.ttf', 60)
 
         title = font.render('City Game', True, (255,255,255))
-        button_text = font.render('Play', True, (0,0,0))
+        play_button_text = font.render('Play', True, (0,0,0))
 
-        title_rect = title.get_rect()
-        button_rect = button_text.get_rect()
+        title_rect = title.get_rect()                                       # need to get the rect object for the placing and display
+        play_button_rect = play_button_text.get_rect()
         
         title_rect.center = (screen_width*0.5, screen_height*0.1)
-        button_rect.center = (screen_width*0.5, screen_height*0.2)
+        play_button_rect.center = (screen_width*0.5, screen_height*0.2)
 
         while True:
             self.screen.fill((0,0,0))
@@ -29,7 +29,7 @@ class Menu:
                         if event.type == pygame.QUIT:
                             exit()
             
-            if button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+            if play_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 tile1 = board.Tile((0,0), tile_type="forest")
 
                 board1 = board.Board({})
@@ -40,10 +40,10 @@ class Menu:
                 hand1.create_deck()
                 hand1.create_hand()
                 board.loop_function(self.screen, board1, hand1)
-            pygame.draw.rect(self.screen, (255,255,255), button_rect)
+            pygame.draw.rect(self.screen, (255,255,255), play_button_rect)
 
             self.screen.blit(title, title_rect)
-            self.screen.blit(button_text, button_rect)
+            self.screen.blit(play_button_text, play_button_rect)
 
 
             pygame.display.flip()
