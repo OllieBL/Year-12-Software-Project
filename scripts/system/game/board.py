@@ -168,6 +168,7 @@ class Hand:
         self.selected_tile = ''
         self._hand = []
         self._isclicking = False
+        self._gameover = False
 
 
     def create_deck(self):
@@ -176,7 +177,7 @@ class Hand:
 
         for tiletype in type_features:
             n = 0
-            loop_amount = 10 #random.randrange(self._loop_range[0], self._loop_range[1]) # so a random amount of tiles are produced within the range
+            loop_amount = random.randrange(self._loop_range[0], self._loop_range[1]) # so a random amount of tiles are produced within the range
             while n <= loop_amount:
                 self._tiles.append(tiletype)
                 n += 1
@@ -185,6 +186,8 @@ class Hand:
 
     def create_hand(self):
         x = 5
+        if len(self._tiles) == 0 and len(self._hand) == 0:
+            self._gameover = True
         while x != len(self._hand) and len(self._tiles) != 0:
             self._hand.append(self._tiles[0])
             self._tiles.pop(0)
@@ -198,36 +201,36 @@ class Hand:
             type_features = json.load(f)
 
         handlen = len(hand)
-        if handlen == 0:
-            return
-        handlenrecip = 1/handlen
+        if handlen > 0:
+            handlenrecip = 1/handlen
 
-        centre_point = 0.5*handlen
+            centre_point = 0.5*handlen
 
-        tile_size = min(0.75*screen_width*handlenrecip, 0.375*screen_height) 
+            tile_size = min(0.75*screen_width*handlenrecip, 0.375*screen_height) 
         
         hand_tile_pos = []
-        for i in range(len(hand)):
-            screen_pos = ((i - centre_point)*tile_size + screen_width*0.5, screen_height - tile_size)
-            hand_tile_pos.append(screen_pos)
-        
-        removed_tile = ''
-        for i in range(len(hand_tile_pos)):
-            display_tile = pygame.Rect(hand_tile_pos[i][0], hand_tile_pos[i][1], tile_size, tile_size)
-            pygame.draw.rect(screen, (255, 255, 255), display_tile)
-            #display_tiles.append(display_tile)                         # I'm just as confused what this was for as you are
-            tile_image = pygame.image.load(type_features[hand[i]]["image"]).convert_alpha()
-            tile_image = pygame.transform.scale(tile_image, (tile_size, tile_size))
-            screen.blit(tile_image, (hand_tile_pos[i][0], hand_tile_pos[i][1]))
-            if display_tile.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not self._isclicking:
-                removed_tile = i
-        if removed_tile != '':
-            self._clicked_tile = self._hand[removed_tile]
-            self._hand.pop(removed_tile)
-            self._isclicking = True
+        if handlen > 0:
+            for i in range(len(hand)):
+                screen_pos = ((i - centre_point)*tile_size + screen_width*0.5, screen_height - tile_size)
+                hand_tile_pos.append(screen_pos)
+            
+            removed_tile = ''
+            for i in range(len(hand_tile_pos)):
+                display_tile = pygame.Rect(hand_tile_pos[i][0], hand_tile_pos[i][1], tile_size, tile_size)
+                pygame.draw.rect(screen, (255, 255, 255), display_tile)
+                #display_tiles.append(display_tile)                         # I'm just as confused what this was for as you are
+                tile_image = pygame.image.load(type_features[hand[i]]["image"]).convert_alpha()
+                tile_image = pygame.transform.scale(tile_image, (tile_size, tile_size))
+                screen.blit(tile_image, (hand_tile_pos[i][0], hand_tile_pos[i][1]))
+                if display_tile.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] and not self._isclicking:
+                    removed_tile = i
+            if removed_tile != '':
+                self._clicked_tile = self._hand[removed_tile]
+                self._hand.pop(removed_tile)
+                self._isclicking = True
         
         font = pygame.font.Font('freesansbold.ttf', 32)
-
+        
         text = font.render('Tiles Left: ' + str(len(self._tiles)), True, (255,255,255))
 
         textRect = text.get_rect()
@@ -235,6 +238,19 @@ class Hand:
         textRect.center = (100, screen_height - 100)
 
         screen.blit(text, textRect)
+
+        if self._gameover == True:
+            menu_button = font.render('Return to Menu', True, (0,0,0))
+            menu_button_rect = menu_button.get_rect()
+            menu_button_rect.center = (screen_width*0.5, screen_height*0.8)
+            pygame.draw.rect(screen, (255,255,255), menu_button_rect)
+            screen.blit(menu_button, menu_button_rect)
+            if menu_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                return True
+            else:
+                return False
+        
+        return False
 
     def get_click_state(self):
         return self._isclicking
@@ -248,6 +264,8 @@ class Hand:
     
 
 def loop_function(screen, board, hand):
+    checker = False
+
     while True:
         screen.fill((0,0,0))
 
@@ -255,6 +273,8 @@ def loop_function(screen, board, hand):
                     if event.type == pygame.QUIT:
                         exit()
         board.generate_board_display(screen, hand)
-        hand.display_hand(screen)
+        checker = hand.display_hand(screen)
         
         pygame.display.flip()
+        if checker == True:
+            return
