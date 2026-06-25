@@ -26,8 +26,8 @@ class Menu:
             self.screen.fill((0,0,0))
 
             for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            exit()
+                if event.type == pygame.QUIT:
+                    exit()
             
             if play_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 tile1 = board.Tile((0,0), tile_type="forest")
