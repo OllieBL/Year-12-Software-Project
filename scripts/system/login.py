@@ -5,6 +5,7 @@ class Login:
     def __init__(self, screen):
         self._username = ''
         self._password = ''
+        self._score = 0
         self.screen = screen
 
 
@@ -37,7 +38,7 @@ class Login:
                     elif password_rect.collidepoint(event.pos):
                         active = 2
                     elif button_rect.collidepoint(event.pos):
-                        self.save_details(user_text[0], user_text[1])
+                        self.check_details(user_text[0], user_text[1])
                     else:
                         active = 0
 
@@ -73,8 +74,7 @@ class Login:
         
         for i in my_list:
             if i[0] == login_details[0] and i[1] == login_details[1]:
-                print('Login Successful: ', i[0], i[1])
-                return
+                return i
             
     def display_signup(self):
         screen_width = self.screen.get_width()
@@ -105,6 +105,7 @@ class Login:
                         active = 2
                     elif button_rect.collidepoint(event.pos):
                         self.save_details(user_text[0], user_text[1])
+                        return 
                     else:
                         active = 0
 

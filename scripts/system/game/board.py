@@ -16,6 +16,9 @@ class Board:
     def print_tiles(self):
         print(self._tiles)
 
+    def get_score(self):
+        return self._score
+
 
     # Scores all of the tile adjacencies and outputs a score 
     def score_board(self):
@@ -277,4 +280,4 @@ def loop_function(screen, board, hand):
         
         pygame.display.flip()
         if checker == True:
-            return
+            return board.get_score()

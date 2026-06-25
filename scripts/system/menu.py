@@ -1,5 +1,6 @@
 import pygame
 import game.board as board
+import login 
 
 class Menu:
     def __init__(self, screen):
@@ -15,15 +16,22 @@ class Menu:
 
         title = font.render('City Game', True, (255,255,255))
         play_button_text = font.render('Play', True, (0,0,0))
+        sign_up_button_text = font.render('Sign up', True, (0,0,0))
+        login_button_text = font.render('Login', True, (0,0,0))
 
         title_rect = title.get_rect()                                       # need to get the rect object for the placing and display
         play_button_rect = play_button_text.get_rect()
+        sign_up_button_rect = sign_up_button_text.get_rect()
+        login_button_rect = login_button_text.get_rect()
         
         title_rect.center = (screen_width*0.5, screen_height*0.1)
         play_button_rect.center = (screen_width*0.5, screen_height*0.2)
+        sign_up_button_rect.center = (screen_width*0.5, screen_height*0.4)
+        login_button_rect.center = (screen_width*0.5, screen_height*0.6)
 
         while True:
             self.screen.fill((0,0,0))
+            login1 = login.Login(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -40,6 +48,10 @@ class Menu:
                 hand1.create_deck()
                 hand1.create_hand()
                 board.loop_function(self.screen, board1, hand1)
+            if sign_up_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                login1.display_signup()
+            if login_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                login1.display_login()
             pygame.draw.rect(self.screen, (255,255,255), play_button_rect)
 
             self.screen.blit(title, title_rect)
