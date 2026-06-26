@@ -124,25 +124,16 @@ class Login:
 
             self.screen.blit(username_text, username_rect)
             self.screen.blit(password_text, password_rect)
+            self.screen.blit(button_text, button_rect)
 
             pygame.display.flip()
 
     def save_details(self, username, password):
+        with open('scripts/system/login_details.txt', 'rb') as f:
+            my_list = pickle.load(f)
+        my_list.append([username, password, 0])
         with open('scripts/system/login_details.txt', 'wb') as f:
-            pickle.dump([[str(username),str(password),0]], f)
+            pickle.dump(my_list, f)
 
-
-
-
-with open('scripts/system/login_details.txt', 'wb') as f:
-    pickle.dump([['','',0]], f)
-
-
-pygame.init()
-
-size = pygame.display.get_desktop_sizes()
-screen = pygame.display.set_mode(size[0])
-
-login0 = Login(screen)
-
-login0.display_login()
+    def save_score(self, user):
+        
