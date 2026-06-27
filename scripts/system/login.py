@@ -7,6 +7,12 @@ class Login:
         self._password = ''
         self._score = 0
         self.screen = screen
+        try:
+            f = open("scripts/system/login_details.txt", "x")
+            with open('scripts/system/login_details.txt', 'wb') as f:
+                pickle.dump([['','',0]], f)
+        except:
+            pass
 
 
     def display_login(self):

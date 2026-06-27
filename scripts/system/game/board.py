@@ -298,4 +298,4 @@ board1.add_tile(tile1)
 hand1 = Hand()
 hand1.create_deck()
 hand1.create_hand()
-new_score = loop_function(screen, board1, hand1)'''
+new_score = loop_function(screen, board1, hand1)''' # This is just here for bugfixing
