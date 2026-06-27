@@ -38,7 +38,7 @@ class Login:
                     elif password_rect.collidepoint(event.pos):
                         active = 2
                     elif button_rect.collidepoint(event.pos):
-                        self.check_details(user_text[0], user_text[1])
+                        return self.check_details(user_text[0], user_text[1])
                     else:
                         active = 0
 
@@ -75,6 +75,7 @@ class Login:
         for i in my_list:
             if i[0] == login_details[0] and i[1] == login_details[1]:
                 return i
+        return False
             
     def display_signup(self):
         screen_width = self.screen.get_width()
@@ -105,7 +106,7 @@ class Login:
                         active = 2
                     elif button_rect.collidepoint(event.pos):
                         self.save_details(user_text[0], user_text[1])
-                        return 
+                        return [user_text[0], user_text[1], 0]
                     else:
                         active = 0
 
@@ -129,11 +130,35 @@ class Login:
             pygame.display.flip()
 
     def save_details(self, username, password):
+        self._username = username
+        self._password = password
+
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)
-        my_list.append([username, password, 0])
+        if self.check_details(username, password) == False:
+            my_list.append([username, password, 0])
         with open('scripts/system/login_details.txt', 'wb') as f:
             pickle.dump(my_list, f)
 
-    def save_score(self, user):
+    def save_score(self, username, password):
+        login_details = [username, password]
+        print(login_details)
+
+        with open('scripts/system/login_details.txt', 'rb') as f:
+            my_list = pickle.load(f)
         
+        for i in range(len(my_list)):
+            if my_list[i][0] == login_details[0] and my_list[i][1] == login_details[1]:
+                my_list[i][2] = self._score
+                print(my_list)
+                with open('scripts/system/login_details.txt', 'wb') as f:
+                    pickle.dump(my_list, f)
+
+    def get_score(self):
+        return self._score
+    
+    def set_score(self, score):
+        self._score = score
+
+'''with open('scripts/system/login_details.txt', 'wb') as f:
+    pickle.dump([['','',0]], f)''' #left this here so I can refresh the contents of login

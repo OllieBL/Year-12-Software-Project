@@ -14,11 +14,9 @@ class Menu:
         screen_height = self.screen.get_height()
 
         font = pygame.font.Font('freesansbold.ttf', 60)
-        
-        if self._user[0] != '':
-            welcome_text = font.render(f'Welcome {self._user[0]}, try beat your score of {self._user[2]}', True, (255,255,255))
-            welcome_rect = welcome_text.get_rect()
 
+        welcome_text = ''
+        
         title = font.render('City Game', True, (255,255,255))
         play_button_text = font.render('Play', True, (0,0,0))
         sign_up_button_text = font.render('Sign up', True, (0,0,0))
@@ -41,6 +39,7 @@ class Menu:
             self.screen.fill((0,0,0))
             login1 = login.Login(self.screen)
 
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
@@ -55,13 +54,16 @@ class Menu:
                 hand1 = board.Hand()
                 hand1.create_deck()
                 hand1.create_hand()
-                board.loop_function(self.screen, board1, hand1)
+                new_score = board.loop_function(self.screen, board1, hand1)
+                if new_score > self._user[2]:
+                    self._user[2] = new_score
             if sign_up_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-                login1.display_signup()
+                self._user = login1.display_signup()
             if login_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-                login1.display_login()
-            if save_button_rect.collidepoint(pygame.mouse.get_cursor()) and pygame.mouse.get_pressed()[0]:
-                login1.save_score()
+                self._user = login1.display_login()
+            if save_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                login1.set_score(self._user[2])
+                login1.save_score(self._user[0], self._user[1])
 
             pygame.draw.rect(self.screen, (255,255,255), play_button_rect)
             pygame.draw.rect(self.screen, (255,255,255), sign_up_button_rect)
@@ -73,6 +75,11 @@ class Menu:
             self.screen.blit(sign_up_button_text, sign_up_button_rect)
             self.screen.blit(login_button_text, login_button_rect)
             self.screen.blit(save_button_text, save_button_rect)
-
+            
+            if self._user[0] != '':
+                welcome_text = font.render(f'Welcome {self._user[0]}, try beat your score of {self._user[2]}', True, (255,255,255))
+                welcome_rect = welcome_text.get_rect()
+                welcome_rect.center = (screen_width*0.5, screen_height*0.6)
+                self.screen.blit(welcome_text, welcome_rect)
 
             pygame.display.flip()
