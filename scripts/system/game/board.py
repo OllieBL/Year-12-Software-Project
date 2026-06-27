@@ -24,6 +24,7 @@ class Board:
     def score_board(self):
         tiles = self._tiles
         self._adjacent_non_tiles = []
+        old_score = 0
 
         # allows me to loop over a set of coordinates that are adjacent
         adjacency_looper = [
@@ -40,7 +41,6 @@ class Board:
         for testing_tile in tiles:
             tile_pos = testing_tile
             tile_adjacencies = tiles[testing_tile].get_adjacencies()
-            old_score = self._score
             new_score = old_score
             for looped_pos in adjacency_looper:
                 # This is in a try so I can avoid searching the list before hand for improved performance
@@ -281,3 +281,21 @@ def loop_function(screen, board, hand):
         pygame.display.flip()
         if checker == True:
             return board.get_score()
+        
+
+
+'''pygame.init()
+
+size = pygame.display.get_desktop_sizes()
+screen = pygame.display.set_mode(size[0])
+        
+tile1 = Tile((0,0), tile_type="forest")
+
+board1 = Board({})
+
+board1.add_tile(tile1)
+
+hand1 = Hand()
+hand1.create_deck()
+hand1.create_hand()
+new_score = loop_function(screen, board1, hand1)'''

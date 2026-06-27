@@ -159,6 +159,3 @@ class Login:
     
     def set_score(self, score):
         self._score = score
-
-'''with open('scripts/system/login_details.txt', 'wb') as f:
-    pickle.dump([['','',0]], f)''' #left this here so I can refresh the contents of login
