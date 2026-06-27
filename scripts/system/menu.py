@@ -58,9 +58,13 @@ class Menu:
                 if new_score > self._user[2]:
                     self._user[2] = new_score
             if sign_up_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-                self._user = login1.display_signup()
+                tester = login1.display_signup()
+                if tester != False:
+                    self._user = tester
             if login_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-                self._user = login1.display_login()
+                tester = login1.display_login()
+                if tester != False:
+                    self._user = tester
             if save_button_rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 login1.set_score(self._user[2])
                 login1.save_score(self._user[0], self._user[1])
@@ -78,8 +82,10 @@ class Menu:
             
             if self._user[0] != '':
                 welcome_text = font.render(f'Welcome {self._user[0]}, try beat your score of {self._user[2]}', True, (255,255,255))
-                welcome_rect = welcome_text.get_rect()
-                welcome_rect.center = (screen_width*0.5, screen_height*0.6)
-                self.screen.blit(welcome_text, welcome_rect)
+            else:
+                welcome_text = font.render(f'Try logging in', True, (255,255,255))
+            welcome_rect = welcome_text.get_rect()
+            welcome_rect.center = (screen_width*0.5, screen_height*0.6)
+            self.screen.blit(welcome_text, welcome_rect)
 
             pygame.display.flip()

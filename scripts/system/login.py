@@ -29,7 +29,7 @@ class Login:
 
         button_text = font.render('Login', True, (0,0,0))
         button_rect = button_text.get_rect()
-        button_rect.center = (screen_width*0.5, screen_height*0.5)
+        button_rect.center = (screen_width*0.5, screen_height*0.6)
 
         active = 0
 
@@ -96,7 +96,7 @@ class Login:
 
         button_text = font.render('Sign Up', True, (0,0,0))
         button_rect = button_text.get_rect()
-        button_rect.center = (screen_width*0.5, screen_height*0.5)
+        button_rect.center = (screen_width*0.5, screen_height*0.6)
 
         active = 0
 
