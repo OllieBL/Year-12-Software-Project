@@ -1,5 +1,6 @@
 import pygame
 import pickle
+import ubelt as ub
 
 class Login:
     def __init__(self, screen):
@@ -71,7 +72,7 @@ class Login:
         
     def check_details(self, username, password):
         self._username = username
-        self._password = password
+        self._password = ub.hash_data(password, hasher='md5', base='abc', convert=False)
 
         login_details = [self._username, self._password]
 
@@ -136,9 +137,10 @@ class Login:
             pygame.display.flip()
 
     def save_details(self, username, password):
+        password = ub.hash_data(password, hasher='md5', base='abc', convert=False)
         self._username = username
         self._password = password
-
+        
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)
         if self.check_details(username, password) == False:
@@ -147,7 +149,7 @@ class Login:
             pickle.dump(my_list, f)
 
     def save_score(self, username, password):
-        login_details = [username, password]
+        login_details = [username, ub.hash_data(password, hasher='md5', base='abc', convert=False)]
         print(login_details)
 
         with open('scripts/system/login_details.txt', 'rb') as f:
@@ -156,7 +158,6 @@ class Login:
         for i in range(len(my_list)):
             if my_list[i][0] == login_details[0] and my_list[i][1] == login_details[1]:
                 my_list[i][2] = self._score
-                print(my_list)
                 with open('scripts/system/login_details.txt', 'wb') as f:
                     pickle.dump(my_list, f)
 
