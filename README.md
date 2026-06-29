@@ -1,6 +1,1 @@
-# Install:
-  - pygame
-  - numpy
-  - ubelt
-
-to run the program, run main.py
+To run the program, run main.exe from the dist folder

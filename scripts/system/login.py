@@ -78,6 +78,7 @@ class Login:
 
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)
+        print(my_list)
         
         for i in my_list:
             if i[0] == login_details[0] and i[1] == login_details[1]:
