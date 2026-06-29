@@ -82,6 +82,7 @@ class Login:
         for i in my_list:
             if i[0] == login_details[0] and i[1] == login_details[1]:
                 return i
+        print(password)
         return False
             
     def display_signup(self):
@@ -137,20 +138,20 @@ class Login:
             pygame.display.flip()
 
     def save_details(self, username, password):
-        password = ub.hash_data(password, hasher='md5', base='abc', convert=False)
         self._username = username
         self._password = password
         
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)
         if self.check_details(username, password) == False:
+            print(password) 
+            password = ub.hash_data(password, hasher='md5', base='abc', convert=False)
             my_list.append([username, password, 0])
         with open('scripts/system/login_details.txt', 'wb') as f:
             pickle.dump(my_list, f)
 
     def save_score(self, username, password):
         login_details = [username, ub.hash_data(password, hasher='md5', base='abc', convert=False)]
-        print(login_details)
 
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)

@@ -17,11 +17,11 @@ class Menu:
 
         welcome_text = ''
         
-        title = font.render('City Game', True, (255,255,255))
-        play_button_text = font.render('Play', True, (0,0,0))
-        sign_up_button_text = font.render('Sign up', True, (0,0,0))
-        login_button_text = font.render('Login', True, (0,0,0))
-        save_button_text = font.render('Save', True, (0,0,0))
+        title = font.render('City Game', True, (35, 17, 35))
+        play_button_text = font.render('Play', True, (255, 255, 255))
+        sign_up_button_text = font.render('Sign up', True, (255, 255, 255))
+        login_button_text = font.render('Login', True, (255, 255, 255))
+        save_button_text = font.render('Save', True, (255, 255, 255))
 
         title_rect = title.get_rect()                                       # need to get the rect object for the placing and display
         play_button_rect = play_button_text.get_rect()
@@ -36,7 +36,7 @@ class Menu:
         save_button_rect.center = (screen_width*0.5, screen_height*0.5)
 
         while True:
-            self.screen.fill((0,0,0))
+            self.screen.fill((80, 140, 164))
             login1 = login.Login(self.screen)
 
 
@@ -69,10 +69,10 @@ class Menu:
                 login1.set_score(self._user[2])
                 login1.save_score(self._user[0], self._user[1])
 
-            pygame.draw.rect(self.screen, (255,255,255), play_button_rect)
-            pygame.draw.rect(self.screen, (255,255,255), sign_up_button_rect)
-            pygame.draw.rect(self.screen, (255,255,255), login_button_rect)
-            pygame.draw.rect(self.screen, (255,255,255), save_button_rect)
+            pygame.draw.rect(self.screen, (35, 17, 35), play_button_rect)
+            pygame.draw.rect(self.screen, (35, 17, 35), sign_up_button_rect)
+            pygame.draw.rect(self.screen, (35, 17, 35), login_button_rect)
+            pygame.draw.rect(self.screen, (35, 17, 35), save_button_rect)
 
             self.screen.blit(title, title_rect)
             self.screen.blit(play_button_text, play_button_rect)
@@ -81,9 +81,9 @@ class Menu:
             self.screen.blit(save_button_text, save_button_rect)
             
             if self._user[0] != '':
-                welcome_text = font.render(f'Welcome {self._user[0]}, try beat your score of {self._user[2]}', True, (255,255,255))
+                welcome_text = font.render(f'Welcome {self._user[0]}, try beat your score of {self._user[2]}', True, (35, 17, 35))
             else:
-                welcome_text = font.render(f'Try logging in', True, (255,255,255))
+                welcome_text = font.render(f'Try logging in', True, (35, 17, 35))
             welcome_rect = welcome_text.get_rect()
             welcome_rect.center = (screen_width*0.5, screen_height*0.6)
             self.screen.blit(welcome_text, welcome_rect)
