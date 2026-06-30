@@ -110,18 +110,18 @@ class Board:
         for i in non_tile_screen_pos:
             display_tile = pygame.Rect(non_tile_screen_pos[i][0], non_tile_screen_pos[i][1], tile_size, tile_size)
             if display_tile.collidepoint(pygame.mouse.get_pos()):
-                pygame.draw.rect(screen, (100, 100, 100), display_tile)
+                pygame.draw.rect(screen, (146, 185, 201), display_tile)
                 if pygame.mouse.get_pressed()[0] and hand.get_click_state():
                     tile = Tile(i, hand.get_clicked_tile())
                     self.add_tile(tile)
                     hand.unclick()
                     hand.create_hand()
             else:
-                pygame.draw.rect(screen, (10, 10, 10), display_tile)
+                pygame.draw.rect(screen, (115, 166, 186), display_tile)
             
         font = pygame.font.Font('freesansbold.ttf', 32)
 
-        text = font.render('score: ' + str(self._score), True, (255,255,255))
+        text = font.render('score: ' + str(self._score), True, (35, 17, 35))
 
         textRect = text.get_rect()
         
@@ -234,7 +234,7 @@ class Hand:
         
         font = pygame.font.Font('freesansbold.ttf', 32)
         
-        text = font.render('Tiles Left: ' + str(len(self._tiles)), True, (255,255,255))
+        text = font.render('Tiles Left: ' + str(len(self._tiles)), True, (35, 17, 35))
 
         textRect = text.get_rect()
         
@@ -270,7 +270,7 @@ def loop_function(screen, board, hand):
     checker = False
 
     while True:
-        screen.fill((0,0,0))
+        screen.fill((80, 140, 164))
 
         for event in pygame.event.get():
                     if event.type == pygame.QUIT:

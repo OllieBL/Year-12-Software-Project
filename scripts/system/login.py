@@ -28,7 +28,7 @@ class Login:
         password_rect = pygame.Rect(0,0,screen_width*0.5, screen_height*0.1)
         password_rect.center = (screen_width*0.5, screen_height*0.3)
 
-        button_text = font.render('Login', True, (0,0,0))
+        button_text = font.render('Login', True, (35, 17, 35))
         button_rect = button_text.get_rect()
         button_rect.center = (screen_width*0.5, screen_height*0.6)
 
@@ -37,7 +37,7 @@ class Login:
         user_text = ['Username','Password']
 
         while True:
-            self.screen.fill((0,0,0))
+            self.screen.fill((80, 140, 164))
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if username_rect.collidepoint(event.pos):
@@ -59,8 +59,8 @@ class Login:
             pygame.draw.rect(self.screen, (255,255,255), password_rect)
             pygame.draw.rect(self.screen, (255,255,255), button_rect)
 
-            username_text = font.render(user_text[0], True, (0,0,0))
-            password_text = font.render(user_text[1], True, (0,0,0))
+            username_text = font.render(user_text[0], True, (35, 17, 35))
+            password_text = font.render(user_text[1], True, (35, 17, 35))
 
             self.screen.blit(username_text, username_rect)
             self.screen.blit(password_text, password_rect)
@@ -78,12 +78,10 @@ class Login:
 
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)
-        print(my_list)
         
         for i in my_list:
             if i[0] == login_details[0] and i[1] == login_details[1]:
                 return i
-        print(password)
         return False
             
     def display_signup(self):
@@ -97,7 +95,7 @@ class Login:
         password_rect = pygame.Rect(0,0,screen_width*0.5, screen_height*0.1)
         password_rect.center = (screen_width*0.5, screen_height*0.3)
 
-        button_text = font.render('Sign Up', True, (0,0,0))
+        button_text = font.render('Sign Up', True, (35, 17, 35))
         button_rect = button_text.get_rect()
         button_rect.center = (screen_width*0.5, screen_height*0.6)
 
@@ -106,7 +104,7 @@ class Login:
         user_text = ['Username','Password']
 
         while True:
-            self.screen.fill((0,0,0))
+            self.screen.fill((80, 140, 164))
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if username_rect.collidepoint(event.pos):
@@ -129,8 +127,8 @@ class Login:
             pygame.draw.rect(self.screen, (255,255,255), password_rect)
             pygame.draw.rect(self.screen, (255,255,255), button_rect)
 
-            username_text = font.render(user_text[0], True, (0,0,0))
-            password_text = font.render(user_text[1], True, (0,0,0))
+            username_text = font.render(user_text[0], True, (35, 17, 35))
+            password_text = font.render(user_text[1], True, (35, 17, 35))
 
             self.screen.blit(username_text, username_rect)
             self.screen.blit(password_text, password_rect)
@@ -145,7 +143,6 @@ class Login:
         with open('scripts/system/login_details.txt', 'rb') as f:
             my_list = pickle.load(f)
         if self.check_details(username, password) == False:
-            print(password) 
             password = ub.hash_data(password, hasher='md5', base='abc', convert=False)
             my_list.append([username, password, 0])
         with open('scripts/system/login_details.txt', 'wb') as f:
